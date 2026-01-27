@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Prayer Times</title>
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Chart.js (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">🕌</div>
+        <div>
+          <div class="title">Prayer Times</div>
+          <div class="subtitle" id="subtitle">Loading…</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn ghost" id="todayBtn" title="Jump to today">Today</button>
+        <button class="btn" id="themeToggle" title="Toggle dark mode">
+          <span id="themeIcon">🌙</span>
+          <span class="hide-sm" id="themeLabel">Dark</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="grid">
+      <!-- Right: Daily + Countdown + Charts -->
+      <section class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <div class="kicker">Selected day</div>
+            <div class="big" id="selectedDateTitle">—</div>
+          </div>
+          <div class="small" id="selectedDateMeta">—</div>
+        </div>
+
+        <!-- Next prayer -->
+        <div class="next-prayer card">
+          <div class="row">
+            <div>
+              <div class="kicker">Next prayer</div>
+              <div class="big" id="nextPrayerName">—</div>
+              <div class="small" id="nextPrayerAt">—</div>
+            </div>
+            <div class="countdown">
+              <div class="kicker">Time left</div>
+              <div class="countdown-time" id="countdown">—</div>
+            </div>
+          </div>
+
+          <div class="progress-wrap" aria-label="Progress until next prayer">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+          <div class="progress-meta">
+            <span id="prevPrayerLabel">—</span>
+            <span id="progressPct">—</span>
+            <span id="nextPrayerLabel">—</span>
+          </div>
+        </div>
+
+        <!-- Daily cards -->
+        <div class="cards" id="prayerCards"></div>
+
+        <!-- Charts -->
+        <div class="card">
+          <div class="row">
+            <div>
+              <div class="kicker">Monthly trend</div>
+              <div class="big">Fajr & Maghrib</div>
+            </div>
+            <div class="pill" id="chartMonthPill">—</div>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="trendChart" height="140"></canvas>
+          </div>
+          <div class="small muted">Times shown as minutes since midnight (for clean trend lines).</div>
+        </div>
+      </section>
+      <!-- Left: Calendar -->
+      <section class="panel">
+        <div class="panel-header">
+          <div class="month-nav">
+            <button class="icon-btn" id="prevMonth" aria-label="Previous month">◀</button>
+            <div class="month-title" id="monthTitle">—</div>
+            <button class="icon-btn" id="nextMonth" aria-label="Next month">▶</button>
+          </div>
+          <div class="hint">Click a day to view details</div>
+        </div>
+
+        <div class="calendar">
+          <div class="dow">
+            <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+          </div>
+          <div class="days" id="calendarDays"></div>
+        </div>
+
+        <div class="panel-footer">
+          <div class="legend">
+            <span class="dot today"></span> Today
+            <span class="dot selected"></span> Selected
+            <span class="dot missing"></span> Missing data
+          </div>
+          <div class="small" id="dataStatus"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>Static app • Data from public Google Sheet CSV</span>
+      <span class="muted">No backend required</span>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
