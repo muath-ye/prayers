@@ -214,11 +214,22 @@ function renderChart() {
   const monthRows = getMonthRows(viewingYear, viewingMonth);
 
   const labels = monthRows.map(r => r.dayNum);
-  const fajr = monthRows.map(r => toMinutes(r.row.Fajr));
-  const maghrib = monthRows.map(r => toMinutes(r.row.Maghrib));
 
-  const textColor = getComputedStyle(document.documentElement).getPropertyValue("--muted").trim();
-  const gridColor = getComputedStyle(document.documentElement).getPropertyValue("--border").trim();
+  // Collect all prayers
+  const fajr     = monthRows.map(r => prayerToMinutes(r.row.Fajr, "Fajr"));
+  const sunrise  = monthRows.map(r => prayerToMinutes(r.row.Sunrise, "Sunrise"));
+  const dhuhr    = monthRows.map(r => prayerToMinutes(r.row.Dhuhr, "Dhuhr"));
+  const asr      = monthRows.map(r => prayerToMinutes(r.row.Asr, "Asr"));
+  const maghrib  = monthRows.map(r => prayerToMinutes(r.row.Maghrib, "Maghrib"));
+  const isha     = monthRows.map(r => prayerToMinutes(r.row.Isha, "Isha"));
+
+  const textColor = getComputedStyle(document.documentElement)
+    .getPropertyValue("--muted")
+    .trim();
+
+  const gridColor = getComputedStyle(document.documentElement)
+    .getPropertyValue("--border")
+    .trim();
 
   if (chart) chart.destroy();
 
@@ -227,23 +238,28 @@ function renderChart() {
     data: {
       labels,
       datasets: [
-        { label: "Fajr (min)", data: fajr, tension: 0.3, pointRadius: 2 },
-        { label: "Maghrib (min)", data: maghrib, tension: 0.3, pointRadius: 2 },
+        { label: "Fajr", data: fajr, tension: 0.3, pointRadius: 2 },
+        { label: "Sunrise", data: sunrise, tension: 0.3, pointRadius: 2 },
+        { label: "Dhuhr", data: dhuhr, tension: 0.3, pointRadius: 2 },
+        { label: "Asr", data: asr, tension: 0.3, pointRadius: 2 },
+        { label: "Maghrib", data: maghrib, tension: 0.3, pointRadius: 2 },
+        { label: "Isha", data: isha, tension: 0.3, pointRadius: 2 },
       ],
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: { labels: { color: textColor } },
+        legend: {
+          labels: { color: textColor },
+        },
         tooltip: {
           callbacks: {
             label: (ctx) => {
-              const mins = ctx.parsed.y;
-              return `${ctx.dataset.label.replace(" (min)","")}: ${minsToHHMM(mins)}`;
-            }
-          }
-        }
+              return `${ctx.dataset.label}: ${minsToHHMM(ctx.parsed.y)}`;
+            },
+          },
+        },
       },
       scales: {
         x: {
@@ -442,6 +458,19 @@ function getMonthRows(year, month){
     if (row) out.push({ dayNum: d, row });
   }
   return out;
+}
+
+function prayerToMinutes(timeStr, prayerName) {
+  if (!timeStr || !timeStr.includes(":")) return null;
+
+  let [h, m] = timeStr.split(":").map(Number);
+
+  // Convert PM prayers
+  if (["Asr", "Maghrib", "Isha"].includes(prayerName) && h < 12) {
+    h += 12;
+  }
+
+  return h * 60 + m;
 }
 
 // -------- Theme --------
