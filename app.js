@@ -284,11 +284,14 @@ function updateCountdownAndProgress() {
   }
 
   // Build today's schedule
-  const schedule = PRAYERS.map(p => ({
-    name: p.key,
-    timeStr: todayRow[p.key],
-    dateObj: timeToDate(now, todayRow[p.key]),
-  })).filter(x => x.timeStr && x.timeStr.includes(":"));
+  const schedule = PRAYERS
+    .filter(p => p.key !== "Sunrise") // ✅ Sunrise is not a prayer
+    .map(p => ({
+      name: p.key,
+      timeStr: todayRow[p.key],
+      dateObj: timeToDate(now, todayRow[p.key]),
+    }))
+    .filter(x => x.timeStr && x.timeStr.includes(":"));
 
   schedule.sort((a,b) => a.dateObj - b.dateObj);
 
