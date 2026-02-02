@@ -284,14 +284,13 @@ function updateCountdownAndProgress() {
   }
 
   // Build today's schedule
-  const schedule = PRAYERS
-    .filter(p => p.key !== "Sunrise") // ✅ Sunrise is not a prayer
-    .map(p => ({
-      name: p.key,
-      timeStr: todayRow[p.key],
-      dateObj: timeToDate(now, todayRow[p.key]),
-    }))
-    .filter(x => x.timeStr && x.timeStr.includes(":"));
+  const PRAYER_ORDER = ["Fajr","Dhuhr","Asr","Maghrib","Isha"];
+
+  const schedule = PRAYER_ORDER.map(name => ({
+    name,
+    timeStr: todayRow[name],
+    dateObj: timeToDate(now, todayRow[name], name),
+  }));
 
   schedule.sort((a,b) => a.dateObj - b.dateObj);
 
@@ -389,9 +388,23 @@ function formatLongDate(date){
   return date.toLocaleDateString(undefined, { weekday:"long", year:"numeric", month:"long", day:"numeric" });
 }
 
-function timeToDate(baseDate, hhmm){
-  const [hh, mm] = hhmm.split(":").map(Number);
-  return new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate(), hh, mm, 0, 0);
+function timeToDate(baseDate, hhmm, prayerName){
+  let [hh, mm] = hhmm.split(":").map(Number);
+
+  // Only convert PM prayers
+  if (["Asr","Maghrib","Isha"].includes(prayerName) && hh < 12) {
+    hh += 12;
+  }
+
+  return new Date(
+    baseDate.getFullYear(),
+    baseDate.getMonth(),
+    baseDate.getDate(),
+    hh,
+    mm,
+    0,
+    0
+  );
 }
 
 function toMinutes(hhmm){
