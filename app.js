@@ -228,7 +228,7 @@ function applyLanguage() {
   document.querySelector(".card .kicker").textContent = t.monthlyTrend;
   document.querySelector(".card .big").textContent = t.allPrayers;
 
-  document.querySelector(".hint").textContent = t.clickHint;
+  // document.querySelector(".hint").textContent = t.clickHint;
   document.querySelector(".card .small.muted").textContent = t.chartNote;
 
   els.notifyLabel.textContent =
